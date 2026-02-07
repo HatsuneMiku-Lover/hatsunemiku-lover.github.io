@@ -160,29 +160,3 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
     console.log(data);
 });
 
-async function signup() {
-    const email = document.getElementById("signupEmail").value;
-    const username = document.getElementById("signupUsername").value;
-    const password = document.getElementById("signupPassword").value;
-
-    const response = await fetch("http://localhost:8080/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, username, password })
-    });
-
-    console.log(await response.text());
-}
-
-async function login() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-
-    const response = await fetch("http://localhost:8080/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-
-    console.log(await response.text());
-}
