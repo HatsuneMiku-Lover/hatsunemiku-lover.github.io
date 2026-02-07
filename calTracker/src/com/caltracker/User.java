@@ -21,10 +21,27 @@ public class User {
         @throws PasswordTooShortException if password <= 6
      --------------------------------------------------------*/
     public User(int id, String username, String password) throws PasswordTooShortException {
-        this.id = id; //unique identifier for database
+        setId(id);
         setUsername(username); //checks same exceptions
         setPassword(password); //checks same exceptions
     } //user constructor
+
+    /*--------------------------------------------------------
+        getId() returns user id
+    --------------------------------------------------------*/
+    public int getId(){
+        return id;
+    } //getId() method
+
+    /*--------------------------------------------------------
+        setId() sets user's id
+        @param int id
+        @throws
+-   -------------------------------------------------------*/
+    public void setId(int id){
+
+        this.id = id;
+    } //setId() method
 
     /*--------------------------------------------------------
         getUsername() returns user's name
