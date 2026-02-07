@@ -45,3 +45,17 @@ To provide a completely free calorie counter app powered by the Google Gemini AP
 The app will have a clean and easy to navigate interface focused on accesibility.
 Using a database, user data will be stored securely on the cloud.
 ```
+
+```
+▗▄▄▄▖▄▄▄   ▄▄▄  █  ▄▄▄     ▗▖ ▗▖   ■  ▄ █ ▄ ▄▄▄▄▄ ▗▞▀▚▖   ▐▌
+  █ █   █ █   █ █ ▀▄▄      ▐▌ ▐▌▗▄▟▙▄▖▄ █ ▄  ▄▄▄▀ ▐▛▀▀▘   ▐▌
+  █ ▀▄▄▄▀ ▀▄▄▄▀ █ ▄▄▄▀     ▐▌ ▐▌  ▐▌  █ █ █ █▄▄▄▄ ▝▚▄▄▖▗▞▀▜▌
+  █             █          ▝▚▄▞▘  ▐▌  █ █ █            ▝▚▄▟▌
+                                  ▐▌                        
+```
+```
+IntelliJ – Java IDE used for backend development.
+Github – Used for pushing and pulling so that the code is synchronized between team members.
+Gemini – Used for the application to identify food items and the associated calorie amount.
+Copilot – Used for advise on using the other tools to its full potential.                                                            
+```
