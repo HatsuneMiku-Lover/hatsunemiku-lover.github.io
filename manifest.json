@@ -3,6 +3,7 @@
   "short_name": "Trackify",
   "start_url": "/index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#034732",
   "theme_color": "#0ACDFF",
   "icons": [
