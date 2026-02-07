@@ -78,3 +78,5 @@ Next, the issue of saving user data surfaced. Everyone was unfamiliar with the p
 
 After an hour, a major breakthrough was made with the frontend. The GUI was displayed using html, and it was made through entirely through AI. Through a randomizer, a color scheme was generated based on a color wheel and exported as hexadecimal. Gree was the primary color of choice due to its association with “healthy foods.”
 ```
+
+Website URL: https://hatsunemiku-lover.github.io/
