@@ -43,7 +43,7 @@ Dino George
 ```
 To provide a completely free calorie counter app powered by the Google Gemini API.
 The app will have a clean and easy to navigate interface focused on accesibility.
-Using a database, user data will be stored securely on the cloud.
+Using a PostGre SQL database, user data will be stored securely on the cloud.
 ```
 
 ```
