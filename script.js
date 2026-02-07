@@ -95,20 +95,8 @@ document.getElementById('scanBtn').addEventListener('click', async () => {
     }
 });
 
-async function signup() {
-    const email = document.getElementById("email").value;
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
 
-    const response = await fetch("http://localhost:8080/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, username, password })
-    });
-
-    const text = await response.text();
-    console.log(text);
-}
+    
 
 // ------------------ SIGNUP ------------------
 async function signup() {
