@@ -1,4 +1,4 @@
-package com.caltracker;
+package main.java.com.caltracker;
 
 import java.util.Date; //imports the time
 import java.util.InputMismatchException;
@@ -21,7 +21,6 @@ public class Meal {
     /*--------------------------------------------------------
         Meal Constructor returns all @params listed below
         @param int id returns database id of user
-        id cannot be < 0; @throws IdAllocationException
         @param String userName returns name of user
         @param String mealName returns name of meal
         @param double calories returns number of calories
@@ -36,6 +35,9 @@ public class Meal {
     public Meal(int id, String userName, String mealName,
                 double calories, double proteins, double carbohydrates,
                 double fibers, double fats, double sugars, Date timeStamp) {
+        //Check for null or empty
+
+
         //Set default values
         this.id = id;
         this.userName = userName;
@@ -59,13 +61,8 @@ public class Meal {
     /*--------------------------------------------------------
         setId() sets meal's id
         @param int id
-        @throws IllegalArgumentException for all values
-        of id < -1
     --------------------------------------------------------*/
-    public void setId(int id) {
-        if (id < -1){
-            throw new IllegalArgumentException("id must be greater than -1");
-        }
+    public void getUserName(int id) {
         this.id = id;
     } //setId() method
 

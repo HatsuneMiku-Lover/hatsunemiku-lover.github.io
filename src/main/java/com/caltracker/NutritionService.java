@@ -1,4 +1,4 @@
-package com.caltracker;
+package main.java.com.caltracker;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;

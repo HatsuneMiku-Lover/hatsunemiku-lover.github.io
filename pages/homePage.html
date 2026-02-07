@@ -4,10 +4,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trackify - Smart Meal Scanner</title>
+    <title>Trackify - Smart java.Meal Scanner</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23034732'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Poppins, sans-serif' font-weight='900' font-size='60' fill='white'%3ET%3C/text%3E%3C/svg%3E">
     <style>
-        /* LOADER ANIMATION */
+        /* FIXED SMOOTH ANIMATION */
         #loader-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 9999; background: #CBE896;
@@ -20,7 +20,10 @@
             color: #034732; overflow: hidden;
         }
         .brand-rest {
-            display: inline-block; max-width: 0; opacity: 0; white-space: nowrap;
+            display: inline-block;
+            max-width: 0;
+            opacity: 0;
+            white-space: nowrap;
             animation: cleanExpand 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @keyframes cleanExpand {
@@ -29,103 +32,49 @@
         }
         .loader-hidden { transform: translateY(-100%); }
 
-        /* BASE STYLES */
-        body {
-            font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100vh;
-            background-image: url("https://image2url.com/r2/default/images/1770433351759-72c97944-077b-4c2d-b88c-ad6e0ab6c4f4.png");
-            background-size: cover; background-position: center; background-attachment: fixed;
-            color: white; padding-bottom: 100px; position: relative;
-        }
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 71, 50, 0.5); backdrop-filter: blur(12px) saturate(160%); z-index: 0;
-        }
-
-        header {
-            position: relative; z-index: 10; background-color: #0ACDFF; color: white;
-            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        main {
-            position: relative; z-index: 5; padding: 2.5rem 1.5rem; max-width: 450px; width: 90%;
-            margin: 3rem auto; background: rgba(255, 255, 255, 0.1); border-radius: 32px;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center;
-        }
-
-        /* SCANNING ANIMATION */
-        .scan-line {
-            position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: #0ACDFF; box-shadow: 0 0 20px #0ACDFF; z-index: 20;
-            display: none; animation: scanMove 2s linear infinite;
-        }
+        /* REMAINDER OF YOUR ORIGINAL CODE */
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100vh; background-image: url("https://image2url.com/r2/default/images/1770433351759-72c97944-077b-4c2d-b88c-ad6e0ab6c4f4.png"); background-size: cover; background-position: center; background-attachment: fixed; color: white; padding-bottom: 100px; position: relative; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 71, 50, 0.5); backdrop-filter: blur(12px) saturate(160%); z-index: 0; }
+        header { position: relative; z-index: 10; background-color: #0ACDFF; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        main { position: relative; z-index: 5; padding: 2.5rem 1.5rem; max-width: 450px; width: 90%; margin: 3rem auto; background: rgba(255, 255, 255, 0.1); border-radius: 32px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #0ACDFF; box-shadow: 0 0 20px #0ACDFF; z-index: 20; display: none; animation: scanMove 2s linear infinite; }
         @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
-
-        .upload-btn {
-            background: #0ACDFF; color: white; padding: 18px 30px; border-radius: 16px;
-            font-weight: 800; border: none; cursor: pointer; margin-bottom: 2rem;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 100%;
-            box-shadow: 0 10px 20px rgba(10, 205, 255, 0.3); font-size: 1.1rem;
-        }
-        .upload-btn:active { transform: scale(0.95); }
-
-        /* NUTRITION STATS */
+        .upload-btn { background: #0ACDFF; color: white; padding: 18px 30px; border-radius: 16px; font-weight: 800; border: none; cursor: pointer; margin-bottom: 2rem; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 100%; box-shadow: 0 10px 20px rgba(10, 205, 255, 0.3); font-size: 1.1rem; }
         .status-item { margin-bottom: 1.2rem; text-align: left; }
         .status-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
         .progress-bg { background: rgba(255,255,255,0.15); height: 10px; border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(0.17, 0.84, 0.44, 1); }
-
-        /* HISTORY */
         .history-section { position: relative; z-index: 5; max-width: 450px; width: 90%; margin: 0 auto; text-align: left; }
-        .history-card {
-            background: rgba(3, 71, 50, 0.6); padding: 18px; border-radius: 20px;
-            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-            border-left: 5px solid #CBE896; transition: 0.3s;
-        }
-
+        .history-card { background: rgba(3, 71, 50, 0.6); padding: 18px; border-radius: 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #CBE896; }
         footer { text-align: center; padding: 1.5rem; background: #CBE896; color: #034732; font-weight: 700; position: fixed; bottom: 0; width: 100%; z-index: 100; }
     </style>
 </head>
 <body>
-
 <div id="loader-overlay">
     <div class="logo-wrap">T<span class="brand-rest">rackify</span></div>
 </div>
-
 <header>
-    <h1 onclick="window.location.href='index.html'" style="margin: 0; font-weight: 800; cursor: pointer;">Trackify</h1>
-    <button style="background: white; color: #0ACDFF; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 700; cursor: pointer;">Sign Out</button>
+    <h1 onclick="window.location.href='../index.html'" style="margin: 0; font-weight: 800; cursor: pointer;">Trackify</h1>
+    <button onclick="window.location.href='../index.html'" style="background: white; color: #0ACDFF; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 700; cursor: pointer;">Sign Out</button>
 </header>
-
 <main>
     <div id="scan-line" class="scan-line"></div>
-    <h2 style="margin-top: 0; font-size: 1.8rem; margin-bottom: 0.5rem;">Meal Scanner</h2>
+    <h2 style="margin-top: 0; font-size: 1.8rem; margin-bottom: 0.5rem;">java.Meal Scanner</h2>
     <p id="status-text" style="color: #CBE896; font-weight: 600; margin-bottom: 2rem;">Ready to scan</p>
-
     <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
-    <button class="upload-btn" id="scanBtn">Scan Your Meal</button>
-
+    <button class="upload-btn" id="scanBtn">Scan Your java.Meal</button>
     <div class="status-container">
         <div class="status-item"><div class="status-label"><span>Calories</span><span id="cal-val">0 kcal</span></div><div class="progress-bg"><div id="cal-bar" class="progress-fill" style="background: #FFFFFF;"></div></div></div>
         <div class="status-item"><div class="status-label"><span>Protein</span><span id="p-val">0g</span></div><div class="progress-bg"><div id="p-bar" class="progress-fill" style="background: #CBE896;"></div></div></div>
-        <div class="status-item"><div class="status-label"><span>Carbohydrates</span><span id="c-val">0g</span></div><div class="progress-bg"><div id="c-bar" class="progress-fill" style="background: #0ACDFF;"></div></div></div>
-
-        <div class="status-item"><div class="status-label"><span>Fats</span><span id="f-val">0g</span></div><div class="progress-bg"><div id="f-bar" class="progress-fill" style="background: #FFADAD;"></div></div></div>
-        <div class="status-item"><div class="status-label"><span>Fibers</span><span id="fib-val">0g</span></div><div class="progress-bg"><div id="fib-bar" class="progress-fill" style="background: #BDB2FF;"></div></div></div>
-        <div class="status-item"><div class="status-label"><span>Sugars</span><span id="s-val">0g</span></div><div class="progress-bg"><div id="s-bar" class="progress-fill" style="background: #FFD6A5;"></div></div></div>
+        <div class="status-item"><div class="status-label"><span>Carbs</span><span id="c-val">0g</span></div><div class="progress-bg"><div id="c-bar" class="progress-fill" style="background: #0ACDFF;"></div></div></div>
     </div>
 </main>
-
 <div class="history-section">
     <h3 style="margin-bottom: 1rem;">Recent Scans</h3>
     <div id="history-list"></div>
 </div>
-
 <footer><p>© 2026 Trackify AI — Precise Nutrition</p></footer>
-
 <script>
-    // Handle Loading Screen
     window.addEventListener("load", () => {
         setTimeout(() => {
             document.getElementById("loader-overlay").classList.add("loader-hidden");
@@ -139,66 +88,35 @@
     const historyList = document.getElementById('history-list');
 
     scanBtn.addEventListener('click', () => cameraInput.click());
-
-    cameraInput.addEventListener('change', function() {
-        if (this.files[0]) runScan();
-    });
+    cameraInput.addEventListener('change', function() { if (this.files[0]) runScan(); });
 
     function runScan() {
-        // UI Feedback
         scanBtn.disabled = true;
         scanLine.style.display = "block";
         statusText.innerText = "Analyzing meal contents...";
 
-        // Simulate AI Processing
         setTimeout(() => {
-            // Generate values matching your Java 'double' fields
-            const calories = (Math.random() * 450 + 150).toFixed(0);
-            const proteins = (Math.random() * 25 + 2).toFixed(1);
-            const carbs = (Math.random() * 50 + 5).toFixed(1);
-            const fats = (Math.random() * 20 + 1).toFixed(1);
-            const fibers = (Math.random() * 8 + 0.5).toFixed(1);
-            const sugars = (Math.random() * 12 + 0).toFixed(1);
+            const p = (Math.random() * 30 + 5).toFixed(1);
+            const c = (Math.random() * 60 + 10).toFixed(1);
+            const cal = (Math.random() * 400 + 200).toFixed(0);
 
             scanLine.style.display = "none";
             statusText.innerText = "Scan Complete!";
             scanBtn.disabled = false;
 
-            // Update Progress Bars & Text
-            updateMetric('cal', calories, 800, " kcal");
-            updateMetric('p', proteins, 50, "g");
-            updateMetric('c', carbs, 100, "g");
-            updateMetric('f', fats, 40, "g");
-            updateMetric('fib', fibers, 15, "g");
-            updateMetric('s', sugars, 30, "g");
+            document.getElementById('cal-bar').style.width = (cal/800)*100 + "%";
+            document.getElementById('cal-val').innerText = cal + " kcal";
+            document.getElementById('p-bar').style.width = (p/50)*100 + "%";
+            document.getElementById('p-val').innerText = p + "g";
+            document.getElementById('c-bar').style.width = (c/100)*100 + "%";
+            document.getElementById('c-val').innerText = c + "g";
 
-            // Add to History
-            addHistoryItem(calories);
-        }, 2500);
-    }
-
-    function updateMetric(id, value, max, unit) {
-        const bar = document.getElementById(`${id}-bar`);
-        const valText = document.getElementById(`${id}-val`);
-        const percentage = Math.min((value / max) * 100, 100);
-
-        bar.style.width = percentage + "%";
-        valText.innerText = value + unit;
-    }
-
-    function addHistoryItem(cal) {
-        const card = document.createElement('div');
-        card.className = 'history-card';
-        card.innerHTML = `
-            <div>
-                <strong>Meal Scan</strong><br>
-                <small>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
-            </div>
-            <div style="font-weight: 800; color: #CBE896;">${cal} kcal</div>
-        `;
-        historyList.prepend(card);
+            const card = document.createElement('div');
+            card.className = 'history-card';
+            card.innerHTML = `<div><strong>java.Meal Scan</strong><br><small>${new Date().toLocaleTimeString()}</small></div><div>${cal} kcal</div>`;
+            historyList.prepend(card);
+        }, 2000);
     }
 </script>
-
 </body>
 </html>

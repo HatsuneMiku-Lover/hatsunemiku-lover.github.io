@@ -1,5 +1,4 @@
-package com.caltracker;
-//packages
+package main.java.com.caltracker;//packages
 import java.util.InputMismatchException;
 
 /*

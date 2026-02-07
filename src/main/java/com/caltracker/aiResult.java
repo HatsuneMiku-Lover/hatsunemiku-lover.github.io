@@ -1,4 +1,4 @@
-package com.caltracker;
+package main.java.com.caltracker;
 
 public class aiResult {
 
