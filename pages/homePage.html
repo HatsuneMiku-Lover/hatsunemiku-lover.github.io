@@ -88,34 +88,77 @@
     const historyList = document.getElementById('history-list');
 
     scanBtn.addEventListener('click', () => cameraInput.click());
-    cameraInput.addEventListener('change', function() { if (this.files[0]) runScan(); });
+    cameraInput.addEventListener('change', function() {
+        if (this.files[0]) runScan(this.files[0]);
+    });
 
-    function runScan() {
+    async function runRealScan(file) {
+        // UI Feedback: Start Animation
         scanBtn.disabled = true;
         scanLine.style.display = "block";
-        statusText.innerText = "Analyzing meal contents...";
+        statusText.innerText = "Connecting to Trackify AI...";
 
-        setTimeout(() => {
-            const p = (Math.random() * 30 + 5).toFixed(1);
-            const c = (Math.random() * 60 + 10).toFixed(1);
-            const cal = (Math.random() * 400 + 200).toFixed(0);
+        const formData = new FormData();
+        formData.append("file", file); // Must match @RequestParam("file") in Java
 
+        try {
+            // Send to Spring Boot Controller
+            const response = await fetch("http://localhost:8080/api/meals/analyze", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) throw new Error("Server Error: " + response.status);
+
+            const mealData = await response.json();
+            console.log("Success! Received:", mealData);
+
+            // UI Feedback: Stop Animation
             scanLine.style.display = "none";
             statusText.innerText = "Scan Complete!";
             scanBtn.disabled = false;
 
-            document.getElementById('cal-bar').style.width = (cal/800)*100 + "%";
-            document.getElementById('cal-val').innerText = cal + " kcal";
-            document.getElementById('p-bar').style.width = (p/50)*100 + "%";
-            document.getElementById('p-val').innerText = p + "g";
-            document.getElementById('c-bar').style.width = (c/100)*100 + "%";
-            document.getElementById('c-val').innerText = c + "g";
+            // Update Progress Bars with REAL data from Java
+            // Use names that match your Java Meal class fields (e.g., mealData.calories)
+            updateUI(mealData);
 
-            const card = document.createElement('div');
-            card.className = 'history-card';
-            card.innerHTML = `<div><strong>java.Meal Scan</strong><br><small>${new Date().toLocaleTimeString()}</small></div><div>${cal} kcal</div>`;
-            historyList.prepend(card);
-        }, 2000);
+            // Add to session history
+            addHistoryItem(mealData.name || "Meal Scan", mealData.calories);
+
+        } catch (error) {
+            console.error("Connection failed:", error);
+            statusText.innerText = "Error: Backend Not Reached";
+            scanLine.style.display = "none";
+            scanBtn.disabled = false;
+            alert("Could not connect to the Java server. Is it running on port 8080?");
+        }
+    }
+
+    function updateUI(meal) {
+        // Update Calories
+        document.getElementById('cal-bar').style.width = Math.min((meal.calories / 800) * 100, 100) + "%";
+        document.getElementById('cal-val').innerText = meal.calories + " kcal";
+
+        // Update Protein
+        document.getElementById('p-bar').style.width = Math.min((meal.protein / 50) * 100, 100) + "%";
+        document.getElementById('p-val').innerText = meal.protein + "g";
+
+        // Update Carbs
+        document.getElementById('c-bar').style.width = Math.min((meal.carbs / 100) * 100, 100) + "%";
+        document.getElementById('c-val').innerText = meal.carbs + "g";
+    }
+
+    function addHistoryItem(name, cal) {
+        const card = document.createElement('div');
+        card.className = 'history-card';
+        card.innerHTML = `
+            <div>
+                <strong>${name}</strong><br>
+                <small>${new Date().toLocaleTimeString()}</small>
+            </div>
+            <div style="font-weight: 800; color: #CBE896;">${cal} kcal</div>
+        `;
+        historyList.prepend(card);
     }
 </script>
 </body>
