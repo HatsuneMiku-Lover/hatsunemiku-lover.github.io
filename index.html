@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#034732">
     <title>Trackify | Smart Nutrition</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. THE SLAM LOADER */
+        /* 1. THE SLAM LOADER (UNTOUCHED) */
         #loader-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 9999; background: #034732;
@@ -33,24 +33,17 @@
         @keyframes expandName { 0% { max-width: 500px; opacity: 1; } 100% { max-width: 500px; opacity: 1; } }
         .loader-hidden { transform: translateY(-100%) !important; pointer-events: none; }
 
-        /* 2. PAGE BASE & BLURRED BACKDROP */
+        /* 2. PAGE BASE & BACKDROP */
         body {
             font-family: 'Poppins', sans-serif; margin: 0; padding: 0;
             min-height: 100vh; display: flex; flex-direction: column;
-            background: #034732;
-            overflow: hidden;
-            position: relative;
+            background: #034732; overflow: hidden; position: relative;
         }
 
-        /* The deep blurred background image */
         body::before {
-            content: '';
-            position: fixed;
-            top: -5%; left: -5%; width: 110%; height: 110%;
+            content: ''; position: fixed; top: -5%; left: -5%; width: 110%; height: 110%;
             background-image: url("https://image2url.com/r2/default/images/1770433351759-72c97944-077b-4c2d-b88c-ad6e0ab6c4f4.png");
-            background-size: cover; background-position: center;
-            filter: blur(6px); /* Stronger background blur */
-            z-index: -1;
+            background-size: cover; background-position: center; filter: blur(6px); z-index: -1;
         }
 
         .mouse-glow {
@@ -59,48 +52,28 @@
             pointer-events: none; z-index: 0;
         }
 
-        /* 3. LIGHTLY BLURRED BUBBLES */
-        #bubble-container {
-            position: fixed; inset: 0; z-index: 5; pointer-events: none;
-        }
+        /* 3. BUBBLES */
+        #bubble-container { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
         .glass-bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
+            position: absolute; background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.15);
             animation: bubbleMorph 3s ease-in-out infinite alternate;
-        }
-
-        .glass-bubble::after {
-            content: '';
-            position: absolute;
-            top: 15%; left: 15%;
-            width: 20%; height: 20%;
-            background: rgba(255, 255, 255, 0.4);
-            filter: blur(3px);
-            border-radius: 50%;
         }
 
         @keyframes bubbleMorph {
             0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-            50% { border-radius: 40% 60% 70% 30% / 40% 70% 30% 60%; }
             100% { border-radius: 30% 70% 70% 30% / 50% 30% 70% 50%; }
         }
 
-        /* 4. HEADER */
+        /* 4. HEADER (APP-OPTIMIZED) */
         header {
             position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-            background: linear-gradient(-45deg, rgba(10, 205, 255, 0.8), rgba(3, 71, 50, 0.8), rgba(203, 232, 150, 0.8));
-            background-size: 400% 400%;
-            animation: gradientFlow 10s ease infinite, headerDrop 0.8s 3.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: white; padding: 1.2rem 2.5rem;
-            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(3, 71, 50, 0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: white; padding: 1.2rem 2.5rem; display: flex; justify-content: space-between; align-items: center;
+            animation: headerDrop 0.8s 3.4s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
-        @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes headerDrop { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* 5. MAIN CONTENT */
@@ -111,12 +84,7 @@
             backdrop-filter: blur(25px); border: 2px solid rgba(255,255,255,0.08);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             animation: boxFadeUp 0.8s 3.2s ease-out both, liquidMorph 4s ease-in-out infinite alternate 4s;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
             position: relative;
-        }
-        .home-box:hover {
-            transform: scale(1.03) translateY(-10px);
-            box-shadow: 0 45px 80px -20px rgba(0, 0, 0, 0.6);
         }
 
         @keyframes liquidMorph {
@@ -125,75 +93,68 @@
         }
         @keyframes boxFadeUp { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 6. BUTTON & FOOTER */
         .get-started-btn {
-            position: relative; overflow: hidden;
             background: #CBE896; color: #034732; padding: 20px 50px; border-radius: 50px;
             font-weight: 800; border: none; cursor: pointer; transition: 0.4s;
             font-size: 1.2rem; margin-top: 20px; font-family: 'Poppins';
             animation: colorPulse 4s infinite ease-in-out;
-            z-index: 100;
         }
         @keyframes colorPulse {
             0%, 100% { background-color: #CBE896; transform: scale(1); }
             50% { background-color: #0ACDFF; transform: scale(1.05); color: white; }
         }
-        footer { text-align: center; padding: 1.5rem; background: #CBE896; color: #034732; font-weight: 700; width: 100%; z-index: 10; position: relative; }
-        #particleCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 8; }
-
-        .shimmer-text {
-            background: linear-gradient(90deg, #fff, #0ACDFF, #fff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 3s linear infinite;
-        }
-        @keyframes shimmer { to { background-position: 200% center; } }
 
         .stat-pill {
             position: absolute; padding: 8px 18px; border-radius: 25px;
             background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.3); font-size: 0.85rem;
             font-weight: 700; color: #CBE896; pointer-events: none;
-            text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            animation: floatPill 5s ease-in-out infinite alternate;
-            z-index: 20;
+            text-transform: uppercase; animation: floatPill 5s ease-in-out infinite alternate; z-index: 20;
         }
         @keyframes floatPill { from { transform: translate(0,0); } to { transform: translate(15px, 25px); } }
 
-        .noise {
-            position: fixed; inset: 0; width: 100%; height: 100%;
-            background: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.05; pointer-events: none; z-index: 9998;
-        }
+        footer { text-align: center; padding: 1.5rem; background: #CBE896; color: #034732; font-weight: 700; width: 100%; z-index: 10; position: relative; }
+        .shimmer-text { background: linear-gradient(90deg, #fff, #0ACDFF, #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 3s linear infinite; }
+        @keyframes shimmer { to { background-position: 200% center; } }
 
-        /* MOBILE OPTIMIZATION */
+        /* MOBILE OVERRIDES (APP-CORE) */
         @media only screen and (max-width: 768px) {
-            .stat-pill { display: none !important; opacity: 0 !important; visibility: hidden !important; }
-            footer { display: none !important; opacity: 0 !important; visibility: hidden !important; }
+            footer { display: none !important; }
+            body { overflow: hidden; height: 100vh; position: fixed; width: 100%; }
+            
+            header {
+                padding: 0.8rem 1.2rem;
+                display: flex;
+                justify-content: center; /* Center title for app feel */
+                align-items: center;
+                background: rgba(3, 71, 50, 0.95);
+            }
+            header h1 { font-size: 1.3rem; letter-spacing: 1px; text-transform: uppercase; }
+            header button { position: absolute; right: 1.2rem; font-size: 0.8rem; padding: 6px 14px !important; }
+
+            .home-layout { padding: 15px; align-items: center; margin-top: 40px; }
             .home-box {
-                padding: 3.5rem 2rem;
-                margin: 0 15px;
-                max-width: 85%;
+                padding: 4rem 1.5rem;
+                max-width: 90%;
+                border-radius: 40px !important; /* Fixed radius for app card look */
+                animation: boxFadeUp 0.8s 3.2s ease-out both; 
             }
             .shimmer-text { font-size: 2.2rem !important; }
-            header { padding: 1rem 1.5rem; }
-            .logo-wrap { font-size: 45px; }
+            .stat-pill { display: none; } /* Remove floating pills for cleaner app look on mobile */
+            
             .get-started-btn {
-                padding: 16px 40px;
+                width: 100%;
+                padding: 18px;
                 font-size: 1.1rem;
-                animation: colorPulse 4s infinite ease-in-out !important;
+                border-radius: 20px; /* Squircle button for app feel */
             }
         }
     </style>
 </head>
 <body>
 
-<div class="noise"></div>
 <div class="mouse-glow"></div>
 <div id="bubble-container"></div>
-<canvas id="particleCanvas"></canvas>
 
 <div id="loader-overlay">
     <div class="bar blue-bar"></div>
@@ -204,16 +165,16 @@
 </div>
 
 <header id="main-header">
-    <h1 style="margin: 0; font-weight: 800; letter-spacing: -1px;">Trackify</h1>
-    <button onclick="window.location.href='#'" style="background: white; color: #0ACDFF; border: none; padding: 8px 22px; border-radius: 50px; font-weight: 700; cursor: pointer;">Sign In</button>
+    <h1 style="margin: 0; font-weight: 900;">Trackify</h1>
+    <button style="background: white; color: #034732; border: none; padding: 8px 22px; border-radius: 50px; font-weight: 700; cursor: pointer;">Sign In</button>
 </header>
 
 <main class="home-layout">
     <div class="home-box">
-        <div class="stat-pill" style="top: -15px; left: -40px; animation-delay: 0s;">✨ Persist</div>
-        <div class="stat-pill" style="top: 20%; right: -50px; animation-delay: -1.5s; color: #0ACDFF;">🌱 Evolve</div>
-        <div class="stat-pill" style="bottom: 10%; left: -60px; animation-delay: -3s;">⚡ Vitality</div>
-        <div class="stat-pill" style="bottom: -20px; right: 20px; animation-delay: -4.5s; color: #CBE896;">💪 Strength</div>
+        <div class="stat-pill" style="top: -15px; left: -40px;">✨ Persist</div>
+        <div class="stat-pill" style="top: 20%; right: -50px; color: #0ACDFF;">🌱 Evolve</div>
+        <div class="stat-pill" style="bottom: 10%; left: -60px;">⚡ Vitality</div>
+        <div class="stat-pill" style="bottom: -20px; right: 20px; color: #CBE896;">💪 Strength</div>
 
         <h2 class="shimmer-text" style="font-size: 2.8rem; margin: 0 0 1.2rem 0; font-weight: 900;">Fuel Your Life</h2>
         <p style="font-size: 1.1rem; opacity: 0.85; margin-bottom: 2.5rem; font-weight: 300;">
@@ -233,21 +194,19 @@
     });
 
     const bubbleContainer = document.getElementById('bubble-container');
-    const bubbleCount = 6;
     const bubbles = [];
 
     class GlassBubble {
         constructor() {
             this.el = document.createElement('div');
             this.el.className = 'glass-bubble';
-            this.size = Math.random() * 100 + 80;
+            this.size = Math.random() * 60 + 80;
             this.x = Math.random() * (window.innerWidth - this.size);
             this.y = Math.random() * (window.innerHeight - this.size);
-            this.dx = (Math.random() - 0.5) * 1.5;
-            this.dy = (Math.random() - 0.5) * 1.5;
+            this.dx = (Math.random() - 0.5) * 1.2;
+            this.dy = (Math.random() - 0.5) * 1.2;
             this.el.style.width = `${this.size}px`;
             this.el.style.height = `${this.size}px`;
-            this.el.style.animationDelay = `${Math.random() * 5}s`;
             bubbleContainer.appendChild(this.el);
         }
         update() {
@@ -259,86 +218,33 @@
         }
     }
 
-    for (let i = 0; i < bubbleCount; i++) bubbles.push(new GlassBubble());
-
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    const btn = document.getElementById('get-started-btn');
-    let particles = [];
-
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize);
-    resize();
-
-    class Particle {
-        constructor(x, y) {
-            this.x = x; this.y = y;
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 5 + 2;
-            this.dx = Math.cos(angle) * velocity;
-            this.dy = Math.sin(angle) * velocity;
-            this.size = Math.random() * 3 + 1;
-            this.alpha = 1;
-        }
-        update() { this.x += this.dx; this.y += this.dy; this.alpha -= 0.02; }
-        draw() {
-            ctx.globalAlpha = this.alpha;
-            ctx.fillStyle = '#CBE896';
-            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-        }
-    }
+    // Fewer bubbles on mobile for performance
+    const count = window.innerWidth < 768 ? 3 : 5;
+    for (let i = 0; i < count; i++) bubbles.push(new GlassBubble());
 
     function mainLoop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach((p, i) => {
-            p.update(); p.draw();
-            if (p.alpha <= 0) particles.splice(i, 1);
-        });
         bubbles.forEach(b => b.update());
         requestAnimationFrame(mainLoop);
     }
     mainLoop();
 
-    btn.addEventListener('click', () => {
-        const rect = btn.getBoundingClientRect();
-        for (let i = 0; i < 20; i++) particles.push(new Particle(rect.left + rect.width/2, rect.top + rect.height/2));
-    });
-
     window.addEventListener('mousemove', e => {
-        document.body.style.setProperty('--x', e.clientX + 'px');
-        document.body.style.setProperty('--y', e.clientY + 'px');
-
-        const rect = btn.getBoundingClientRect();
-        const btnX = rect.left + rect.width / 2;
-        const btnY = rect.top + rect.height / 2;
-        const dist = Math.hypot(e.clientX - btnX, e.clientY - btnY);
-
-        if (window.innerWidth > 768 && dist < 150) {
-            const moveX = (e.clientX - btnX) * 0.2;
-            const moveY = (e.clientY - btnY) * 0.2;
-            btn.style.transform = `translate(${moveX}px, ${moveY}px)`;
-        } else if (window.innerWidth > 768) {
-            btn.style.transform = `translate(0, 0)`;
+        if (window.innerWidth > 768) {
+            document.body.style.setProperty('--x', e.clientX + 'px');
+            document.body.style.setProperty('--y', e.clientY + 'px');
+            const btn = document.getElementById('get-started-btn');
+            const rect = btn.getBoundingClientRect();
+            const btnX = rect.left + rect.width / 2;
+            const btnY = rect.top + rect.height / 2;
+            const dist = Math.hypot(e.clientX - btnX, e.clientY - btnY);
+            if (dist < 150) {
+                const moveX = (e.clientX - btnX) * 0.2;
+                const moveY = (e.clientY - btnY) * 0.2;
+                btn.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            } else {
+                btn.style.transform = `translate(0, 0)`;
+            }
         }
-    });
-
-    btn.addEventListener('mousedown', function(e) {
-        let ripple = document.createElement('span');
-        const rect = this.getBoundingClientRect();
-        ripple.style.position = 'absolute';
-        ripple.style.background = 'rgba(255,255,255,0.6)';
-        ripple.style.height = ripple.style.width = '120px';
-        ripple.style.marginLeft = '-60px';
-        ripple.style.marginTop = '-60px';
-        ripple.style.borderRadius = '50%';
-        ripple.style.left = (e.clientX - rect.left) + 'px';
-        ripple.style.top = (e.clientY - rect.top) + 'px';
-        ripple.style.transform = 'scale(0)';
-        ripple.style.transition = 'transform 0.6s ease-out, opacity 0.6s';
-        ripple.style.pointerEvents = 'none';
-        this.appendChild(ripple);
-        setTimeout(() => { ripple.style.transform = 'scale(4)'; ripple.style.opacity = '0'; }, 10);
-        setTimeout(() => ripple.remove(), 700);
     });
 </script>
 </body>
