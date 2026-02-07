@@ -1,3 +1,4 @@
+package com.caltracker;
 
 import java.util.Date; //imports the time
 import java.util.InputMismatchException;
@@ -51,11 +52,26 @@ public class Meal {
     } //Meal constructor
 
     /*--------------------------------------------------------
+        getId() returns meal's id
+    --------------------------------------------------------*/
+    public int getId(){
+        return id;
+    } //getUserName() method
+
+    /*--------------------------------------------------------
+        setId() sets meal's id
+        @param int id
+    --------------------------------------------------------*/
+    public void getUserName(int id) {
+        this.id = id;
+    } //setId() method
+
+    /*--------------------------------------------------------
         getUserName() returns user's name
      --------------------------------------------------------*/
     public String getUserName(){
         return userName;
-    } //getUserName() method
+    } //getId() method
 
     /*--------------------------------------------------------
         setUserName() sets user's name
@@ -199,7 +215,7 @@ public class Meal {
 
     /*--------------------------------------------------------
         setTimeStamp() sets timeStamp's name
-        @param double calories
+        @param Date timeStamp
     --------------------------------------------------------*/
     public void setTimeStamp(Date timeStamp){
         this.timeStamp = timeStamp;
