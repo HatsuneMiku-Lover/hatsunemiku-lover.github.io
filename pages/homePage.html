@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trackify - Smart Meal Scanner</title>
@@ -41,16 +41,15 @@
             font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100vh;
             background-image: url("https://image2url.com/r2/default/images/1770433351759-72c97944-077b-4c2d-b88c-ad6e0ab6c4f4.png");
             background-size: cover; background-position: center; background-attachment: fixed;
-            color: white; padding-bottom: 80px;
+            color: white; padding-bottom: 100px;
             position: relative;
         }
 
-        /* The Liquid Glass Layer */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 71, 50, 0.5); /* Deep green tint */
+            background: rgba(3, 71, 50, 0.5);
             backdrop-filter: blur(12px) saturate(160%);
             -webkit-backdrop-filter: blur(12px) saturate(160%);
             z-index: 0;
@@ -66,9 +65,9 @@
         main {
             position: relative; z-index: 5;
             overflow: hidden;
-            padding: 2.5rem 1.5rem; max-width: 450px; width: 90%;
-            margin: 4rem auto 2rem auto;
-            background: rgba(255, 255, 255, 0.1); /* Frosted glass look */
+            padding: 2rem 1.5rem; max-width: 450px; width: 90%;
+            margin: 2rem auto;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -83,16 +82,18 @@
         @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
 
         .upload-btn {
-            background: #0ACDFF; color: white; padding: 18px 40px; border-radius: 12px;
+            background: #0ACDFF; color: white; padding: 16px 30px; border-radius: 12px;
             font-weight: 700; border: none; cursor: pointer; margin-bottom: 1.5rem;
             transition: all 0.3s; font-family: 'Poppins'; font-size: 1rem;
             box-shadow: 0 4px 15px rgba(10, 205, 255, 0.3);
+            width: 100%;
         }
         .upload-btn:hover { transform: scale(1.02); background: #00b4e6; }
 
-        .status-item { margin-bottom: 1.2rem; text-align: left; }
-        .status-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
-        .progress-bg { background: rgba(255,255,255,0.15); height: 10px; border-radius: 10px; overflow: hidden; }
+        .status-container { margin-top: 20px; }
+        .status-item { margin-bottom: 1rem; text-align: left; }
+        .status-label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: 600; font-size: 0.85rem; }
+        .progress-bg { background: rgba(255,255,255,0.15); height: 8px; border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(0.17, 0.84, 0.44, 1); }
 
         /* History Section */
@@ -130,28 +131,43 @@
 
 <main id="main-scanner">
     <div id="scan-line" class="scan-line"></div>
-    <h2 style="margin-top:0;">Scan Your Meal</h2>
-    <p id="status-text" style="color: #CBE896; font-weight: 600; min-height: 24px; font-size: 0.9rem;"></p>
+    <h2 style="margin-top:0; font-size: 1.4rem;">Meal Intelligence</h2>
+    <p id="status-text" style="color: #CBE896; font-weight: 600; min-height: 24px; font-size: 0.9rem; margin-bottom: 1.5rem;">Ready to scan</p>
 
     <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
     <button class="upload-btn" id="scanBtn">Start Scanning</button>
 
     <div class="status-container">
         <div class="status-item">
+            <div class="status-label"><span>Calories</span><span id="cal-val">0 kcal</span></div>
+            <div class="progress-bg"><div id="cal-bar" class="progress-fill" style="background: #FFFFFF;"></div></div>
+        </div>
+        <div class="status-item">
             <div class="status-label"><span>Protein</span><span id="p-val">0g</span></div>
             <div class="progress-bg"><div id="p-bar" class="progress-fill" style="background: #CBE896;"></div></div>
         </div>
         <div class="status-item">
-            <div class="status-label"><span>Carbs</span><span id="c-val">0g</span></div>
+            <div class="status-label"><span>Carbohydrates</span><span id="c-val">0g</span></div>
             <div class="progress-bg"><div id="c-bar" class="progress-fill" style="background: #0ACDFF;"></div></div>
+        </div>
+        <div class="status-item">
+            <div class="status-label"><span>Fat</span><span id="f-val">0g</span></div>
+            <div class="progress-bg"><div id="f-bar" class="progress-fill" style="background: #FFD700;"></div></div>
+        </div>
+        <div class="status-item">
+            <div class="status-label"><span>Sugar</span><span id="s-val">0g</span></div>
+            <div class="progress-bg"><div id="s-bar" class="progress-fill" style="background: #FF85A1;"></div></div>
+        </div>
+        <div class="status-item">
+            <div class="status-label"><span>Fiber</span><span id="fib-val">0g</span></div>
+            <div class="progress-bg"><div id="fib-bar" class="progress-fill" style="background: #A1887F;"></div></div>
         </div>
     </div>
 </main>
 
 <div class="history-section">
     <h3 style="margin-left: 10px; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Recent Logs</h3>
-    <div id="history-list">
-    </div>
+    <div id="history-list"></div>
 </div>
 
 <footer><p style="margin:0;">© 2026 Trackify AI</p></footer>
@@ -182,38 +198,52 @@
         scanBtn.disabled = true;
         scanBtn.innerText = "Analyzing...";
         scanLine.style.display = "block";
-        statusText.innerText = "Identifying ingredients...";
+        statusText.innerText = "Extracting nutritional data...";
 
         // Reset bars for new scan animation
-        document.getElementById('p-bar').style.width = "0%";
-        document.getElementById('c-bar').style.width = "0%";
+        const bars = ['cal-bar', 'p-bar', 'c-bar', 'f-bar', 's-bar', 'fib-bar'];
+        bars.forEach(id => document.getElementById(id).style.width = "0%");
 
         setTimeout(() => {
-            const results = {
-                protein: Math.floor(Math.random() * 35) + 15,
-                carbs: Math.floor(Math.random() * 50) + 20,
-                mealName: "Detected Meal #" + (historyList.children.length + 1)
+            // Simulated AI extraction logic using double precision
+            const protein = (Math.random() * 25 + 10).toFixed(1);
+            const carbs = (Math.random() * 50 + 15).toFixed(1);
+            const fat = (Math.random() * 20 + 5).toFixed(1);
+            const sugar = (Math.random() * 10).toFixed(1);
+            const fibers = (Math.random() * 8).toFixed(1);
+            
+            // Calculate calories based on 4-4-9 rule
+            const calories = ( (protein * 4) + (carbs * 4) + (fat * 9) ).toFixed(0);
+
+            const stats = {
+                calories, protein, carbohydrates: carbs, fat, sugar, fibers,
+                mealName: "Scan Result #" + (historyList.children.length + 1)
             };
 
             scanLine.style.display = "none";
-            statusText.innerText = "Scan Complete!";
+            statusText.innerText = "Scan Successful!";
             scanBtn.disabled = false;
             scanBtn.innerText = "Scan Next Meal";
 
-            updateUI(results);
-            addToHistory(results);
+            updateUI(stats);
+            addToHistory(stats);
         }, 2500);
     }
 
     function updateUI(data) {
-        // Cap width at 100% to prevent layout breaks
-        const pWidth = Math.min(data.protein * 2.5, 100);
-        const cWidth = Math.min(data.carbs * 1.5, 100);
+        // Helper to set bar width and text
+        const updateElement = (id, val, max, unit) => {
+            const pct = Math.min((val / max) * 100, 100);
+            document.getElementById(`${id}-bar`).style.width = pct + "%";
+            document.getElementById(`${id}-val`).innerText = val + unit;
+        };
 
-        document.getElementById('p-bar').style.width = pWidth + "%";
-        document.getElementById('p-val').innerText = data.protein + "g";
-        document.getElementById('c-bar').style.width = cWidth + "%";
-        document.getElementById('c-val').innerText = data.carbs + "g";
+        updateElement('cal', data.calories, 1000, " kcal");
+        updateElement('p', data.protein, 50, "g");
+        updateElement('c', data.carbohydrates, 100, "g");
+        updateElement('f', data.fat, 40, "g");
+        updateElement('s', data.sugar, 30, "g");
+        updateElement('fib', data.fibers, 15, "g");
     }
 
     function addToHistory(data) {
@@ -223,11 +253,12 @@
         card.innerHTML = `
             <div>
                 <strong style="display:block;">${data.mealName}</strong>
-                <small style="opacity:0.8;">Today at ${time}</small>
+                <small style="opacity:0.8;">${time} • ${data.calories} kcal</small>
             </div>
-            <div style="text-align:right;">
-                <span style="color:#CBE896; font-weight:700;">${data.protein}g P</span><br>
-                <span style="color:#0ACDFF; font-weight:700;">${data.carbs}g C</span>
+            <div style="text-align:right; font-size: 0.8rem;">
+                <span style="color:#CBE896; font-weight:700;">${data.protein}g P</span> • 
+                <span style="color:#0ACDFF; font-weight:700;">${data.carbohydrates}g C</span><br>
+                <span style="color:#FFD700; font-weight:700;">${data.fat}g F</span>
             </div>
         `;
         historyList.prepend(card);
