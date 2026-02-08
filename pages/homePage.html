@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Trackify">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Trackify">
 
-<meta name="theme-color" content="#0ACDFF">
+    <meta name="theme-color" content="#0ACDFF">
     <title>Trackify - Smart Meal Scanner</title>
     <style>
-        /* --- LOADER & CORE STYLES --- */
+        /* --- CORE STYLES --- */
         #loader-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 9999; background: #CBE896;
@@ -25,34 +25,40 @@
         @keyframes expand { to { max-width: 400px; opacity: 1; } }
         .loader-hidden { transform: translateY(-100%); }
 
-        body { 
-            font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100vh; 
-            background: linear-gradient(rgba(3, 71, 50, 0.7), rgba(3, 71, 50, 0.7)), 
-                        url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&w=1000&q=80');
+        body {
+            font-family: 'Poppins', sans-serif; margin: 0; padding: 0; min-height: 100vh;
+            background: linear-gradient(rgba(3, 71, 50, 0.7), rgba(3, 71, 50, 0.7)),
+            url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&w=1000&q=80');
             background-size: cover; background-position: center; background-attachment: fixed;
             color: white; padding-bottom: 120px;
         }
-        
+
         header { background: #0ACDFF; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 100; }
         .logo { font-weight: 800; font-size: 1.5rem; cursor: pointer; text-decoration: none; color: white; }
-        
+
         main { padding: 2rem 1rem; max-width: 450px; margin: 2rem auto; background: rgba(255, 255, 255, 0.1); border-radius: 32px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); text-align: center; }
-        
-        /* --- SCANNER & UI --- */
-        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #0ACDFF; box-shadow: 0 0 15px #0ACDFF; display: none; animation: scanMove 2s linear infinite; }
-        @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
-        
+
+        /* --- CIRCULAR PROGRESS --- */
+        .circle-container {
+            position: relative; width: 180px; height: 180px; margin: 0 auto 1.5rem;
+        }
+        .circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .circle-bg { fill: none; stroke: rgba(255, 255, 255, 0.2); stroke-width: 12; }
+        .circle-progress {
+            fill: none; stroke: #CBE896; stroke-width: 12; stroke-linecap: round;
+            stroke-dasharray: 440; stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1s ease, stroke 0.5s ease;
+        }
+        .circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+
         .upload-btn { background: #0ACDFF; color: white; padding: 16px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 1rem; transition: transform 0.2s; }
-        .upload-btn:active { transform: scale(0.98); }
         .test-btn { background: #034732; }
 
         .status-item { margin-bottom: 1rem; text-align: left; }
-        .progress-bg { background: rgba(255,255,255,0.2); height: 8px; border-radius: 10px; margin-top: 5px; }
-        .progress-fill { height: 100%; width: 0%; transition: width 0.8s ease, background-color 0.5s ease; border-radius: 10px; }
+        .progress-bg { background: rgba(255,255,255,0.2); height: 8px; border-radius: 10px; margin-top: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; transition: width 0.8s ease; border-radius: 10px; }
 
-        .total-card { background: #0ACDFF; padding: 1.5rem; border-radius: 24px; margin: 1.5rem auto; max-width: 420px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .history-card { background: rgba(3, 71, 50, 0.8); padding: 1rem; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #CBE896; }
-        
         footer { text-align: center; padding: 1rem; background: #CBE896; color: #034732; font-weight: 700; position: fixed; bottom: 0; width: 100%; }
     </style>
 </head>
@@ -67,39 +73,37 @@
     <button id="signOutBtn" style="background: white; color: #0ACDFF; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">Reset</button>
 </header>
 
-<main style="position: relative;">
-    <div id="scan-line" class="scan-line"></div>
-    <h2 style="margin: 0 0 0.5rem 0;">Meal Scanner</h2>
+<main>
+    <h2 style="margin: 0 0 0.5rem 0;">Daily Progress</h2>
+
+    <div class="circle-container">
+        <svg class="circle-svg" viewBox="0 0 160 160">
+            <circle class="circle-bg" cx="80" cy="80" r="70"></circle>
+            <circle id="goal-circle" class="circle-progress" cx="80" cy="80" r="70"></circle>
+        </svg>
+        <div class="circle-text">
+            <div id="session-total" style="font-size: 1.8rem; font-weight: 900; line-height: 1;">0</div>
+            <div style="font-size: 0.7rem; opacity: 0.8; font-weight: 600;">KCAL TOTAL</div>
+        </div>
+    </div>
+
     <p id="status-text" style="color: #CBE896; font-size: 0.9rem; margin-bottom: 1.5rem;">Ready to scan</p>
-    
+
     <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
     <button class="upload-btn" id="scanBtn">Scan Your Meal</button>
     <button class="upload-btn test-btn" id="testBtn">Test (Mock Data)</button>
-    
-    <div class="status-container">
+
+    <div class="status-container" style="margin-top: 1.5rem;">
         <div class="status-item">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem;"><span>Calories</span><span id="cal-val">0 kcal</span></div>
-            <div class="progress-bg"><div id="cal-bar" class="progress-fill" style="background: white;"></div></div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem;"><span>Last Meal Calories</span><span id="last-cal-val">0 kcal</span></div>
+            <div class="progress-bg"><div id="last-cal-bar" class="progress-fill" style="background: white;"></div></div>
         </div>
         <div class="status-item">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem;"><span>Protein</span><span id="p-val">0g</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem;"><span>Last Meal Protein</span><span id="p-val">0g</span></div>
             <div class="progress-bg"><div id="p-bar" class="progress-fill" style="background: #CBE896;"></div></div>
         </div>
     </div>
 </main>
-
-<div class="total-card">
-    <span style="font-size: 0.8rem; opacity: 0.8; font-weight: 600;">DAILY TOTAL</span>
-    <div style="font-size: 2rem; font-weight: 900; margin-bottom: 8px;" id="session-total">0 kcal</div>
-    
-    <div class="progress-bg" style="background: rgba(0,0,0,0.2); height: 12px; margin-bottom: 4px;">
-        <div id="goal-bar" class="progress-fill" style="background: #CBE896; width: 0%;"></div>
-    </div>
-    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 600; opacity: 0.9;">
-        <span>0</span>
-        <span>2000 kcal goal</span>
-    </div>
-</div>
 
 <div style="max-width: 450px; margin: 0 auto; padding: 0 1rem;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -117,18 +121,7 @@
     const cameraInput = document.getElementById('cameraInput');
     const statusText = document.getElementById('status-text');
     const historyList = document.getElementById('history-list');
-
-    document.getElementById('homeLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    document.getElementById('signOutBtn').addEventListener('click', () => {
-        if(confirm("This will clear your current session. Continue?")) {
-            localStorage.removeItem('mealHistory');
-            location.reload();
-        }
-    });
+    const CIRCUMFERENCE = 440;
 
     window.addEventListener("load", () => {
         setTimeout(() => document.getElementById("loader-overlay").classList.add("loader-hidden"), 1000);
@@ -140,34 +133,37 @@
     testBtn.addEventListener('click', () => {
         setLoading(true);
         setTimeout(() => {
-            const mock = { 
-                name: "Healthy Bowl", 
+            processResult({
+                name: "Healthy Bowl",
                 calories: Math.floor(Math.random() * 400 + 200),
-                protein: Math.floor(Math.random() * 30 + 10) 
-            };
-            processResult(mock);
+                protein: Math.floor(Math.random() * 30 + 10)
+            });
         }, 1200);
     });
 
     cameraInput.addEventListener('change', async (e) => {
-        if (!e.target.files[0]) return;
+        const file = e.target.files[0];
+        if (!file) return;
         setLoading(true);
-        
+        statusText.innerText = "Connecting to Trackify AI...";
         const formData = new FormData();
-        formData.append("file", e.target.files[0]);
+        formData.append("image", file);
 
         try {
-            const res = await fetch("https://trackify-backend-0b47.onrender.com", { method: "POST", body: formData });
-            const data = await res.json();
+            const response = await fetch("https://trackify-backend-0b47.onrender.com/analyze", {
+                method: "POST",
+                body: formData
+            });
+            if (!response.ok) throw new Error("Server Error");
+            const data = await response.json();
             processResult(data);
         } catch (err) {
             setLoading(false);
-            statusText.innerText = "Connection Error";
+            statusText.innerText = "Scan failed.";
         }
     });
 
     function setLoading(isLoading) {
-        document.getElementById('scan-line').style.display = isLoading ? "block" : "none";
         scanBtn.disabled = isLoading;
         testBtn.disabled = isLoading;
         statusText.innerText = isLoading ? "Analyzing..." : "Ready to scan";
@@ -175,21 +171,18 @@
 
     function processResult(data) {
         setLoading(false);
-        updateBars(data);
-        saveEntry(data.name || "Meal", data.calories);
-    }
+        // Update Last Meal Bars
+        document.getElementById('last-cal-bar').style.width = Math.min((data.calories / 1000) * 100, 100) + "%";
+        document.getElementById('last-cal-val').innerText = (data.calories || 0) + " kcal";
+        document.getElementById('p-bar').style.width = Math.min((data.protein / 50) * 100, 100) + "%";
+        document.getElementById('p-val').innerText = (data.protein || 0) + "g";
 
-    function updateBars(meal) {
-        document.getElementById('cal-bar').style.width = Math.min((meal.calories / 1000) * 100, 100) + "%";
-        document.getElementById('cal-val').innerText = meal.calories + " kcal";
-        document.getElementById('p-bar').style.width = Math.min((meal.protein / 50) * 100, 100) + "%";
-        document.getElementById('p-val').innerText = meal.protein + "g";
+        saveEntry(data.name || "Meal", data.calories || 0);
     }
 
     function saveEntry(name, cal) {
         const history = JSON.parse(localStorage.getItem('mealHistory') || "[]");
         history.unshift({ name, cal, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-        // Increased limit to 25 items
         localStorage.setItem('mealHistory', JSON.stringify(history.slice(0, 25)));
         renderHistory();
     }
@@ -199,7 +192,6 @@
         historyList.innerHTML = '';
         let total = 0;
         const GOAL = 2000;
-        const goalBar = document.getElementById('goal-bar');
 
         history.forEach(item => {
             total += item.cal;
@@ -209,22 +201,20 @@
                     <span style="color:#CBE896; font-weight:800;">${item.cal} kcal</span>
                 </div>`;
         });
-        
-        document.getElementById('session-total').innerText = total + " kcal";
 
-        if (total > GOAL) {
-            goalBar.style.width = "100%";
-            goalBar.style.background = "#FF4D4D";
-        } else {
-            const percentage = (total / GOAL) * 100;
-            goalBar.style.width = percentage + "%";
-            goalBar.style.background = "#CBE896";
-        }
+        document.getElementById('session-total').innerText = total;
+
+        const circle = document.getElementById('goal-circle');
+        const percentage = Math.min(total / GOAL, 1);
+        circle.style.strokeDashoffset = CIRCUMFERENCE - (percentage * CIRCUMFERENCE);
+        circle.style.stroke = total > GOAL ? "#FF4D4D" : "#CBE896";
     }
 
     function clearHistory() {
-        localStorage.removeItem('mealHistory');
-        renderHistory();
+        if(confirm("Clear all history?")) {
+            localStorage.removeItem('mealHistory');
+            renderHistory();
+        }
     }
 </script>
 </body>
