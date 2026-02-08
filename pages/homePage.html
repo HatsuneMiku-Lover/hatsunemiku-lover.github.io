@@ -40,13 +40,14 @@
         .circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
 
         .upload-btn { background: #0ACDFF; color: white; padding: 16px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 1rem; transition: transform 0.2s; }
-        .upload-btn:disabled { background: #555; cursor: wait; }
+        .upload-btn:disabled { background: #555; cursor: wait; opacity: 0.7; }
         
         .status-item { margin-bottom: 1rem; text-align: left; }
         .progress-bg { background: rgba(255,255,255,0.2); height: 8px; border-radius: 10px; margin-top: 5px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; transition: width 0.8s ease; border-radius: 10px; }
 
-        .history-card { background: rgba(3, 71, 50, 0.8); padding: 1rem; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #CBE896; }
+        .history-card { background: rgba(3, 71, 50, 0.8); padding: 1rem; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #CBE896; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
         footer { text-align: center; padding: 1rem; background: #CBE896; color: #034732; font-weight: 700; position: fixed; bottom: 0; width: 100%; }
     </style>
 </head>
@@ -98,7 +99,7 @@
 <footer>Trackify AI — Nutrition Scanner</footer>
 
 <script>
-    const API_KEY = "AIzaSyC-QeGWJWf4b6fwI2lbq0huDJbs9EFrwGk";
+    const API_KEY = "AIzaSyCQDDY_7sYkknzT7PajcU6_vg4p6dvqu8g";
     const scanBtn = document.getElementById('scanBtn');
     const cameraInput = document.getElementById('cameraInput');
     const statusText = document.getElementById('status-text');
@@ -115,11 +116,12 @@
         const file = e.target.files[0];
         if (!file) return;
 
-        setLoading(true, "Analyzing...");
+        setLoading(true, "Processing image...");
 
         try {
-            const base64Data = await toBase64(file);
-            const imageData = base64Data.split(',')[1];
+            // Compress and convert image
+            const imageData = await processImage(file);
+            setLoading(true, "AI Analyzing...");
 
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
                 method: 'POST',
@@ -127,22 +129,22 @@
                 body: JSON.stringify({
                     contents: [{
                         parts: [
-                            { text: "Examine image. If NOT food, return {'error': 'not_food'}. If it IS food, return JSON: {'name': 'dish name', 'calories': number, 'protein': number}. No other text." },
-                            { inline_data: { mime_type: file.type, data: imageData } }
+                            { text: "Identify the food in this image. If it is NOT food, return { 'error': 'not_food' }. If it IS food, return a JSON object with: { 'name': 'Dish Name', 'calories': 0, 'protein': 0 }. Estimate portions carefully." },
+                            { inline_data: { mime_type: "image/jpeg", data: imageData } }
                         ]
-                    }]
+                    }],
+                    generationConfig: {
+                        response_mime_type: "application/json"
+                    }
                 })
             });
 
-            const data = await response.json();
+            const result = await response.json();
             
-            if (data.error) throw new Error(data.error.message);
+            if (result.error) throw new Error(result.error.message);
 
-            const rawText = data.candidates[0].content.parts[0].text;
-            const jsonMatch = rawText.match(/\{.*\}/s);
-            if (!jsonMatch) throw new Error("Could not read meal data.");
-            
-            const meal = JSON.parse(jsonMatch[0]);
+            // Directly parse text because we forced response_mime_type: "application/json"
+            const meal = JSON.parse(result.candidates[0].content.parts[0].text);
 
             if (meal.error === 'not_food') {
                 showError("That doesn't look like food!");
@@ -151,20 +153,36 @@
 
             processResult(meal);
         } catch (err) {
-            console.error(err);
-            showError("Analysis failed. Try again.");
+            console.error("API Error:", err);
+            showError("Analysis failed. Check connection.");
         }
     };
 
-    const toBase64 = file => new Promise((res, rej) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => res(reader.result);
-        reader.onerror = rej;
-    });
+    // Helper to resize image so API calls are fast
+    function processImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const scale = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]);
+                };
+            };
+        });
+    }
 
     function setLoading(isLoading, msg = "Ready") {
         scanBtn.disabled = isLoading;
+        scanBtn.innerText = isLoading ? "Scanning..." : "Scan Your Meal";
         statusText.innerText = msg;
         statusText.style.color = "#CBE896";
     }
@@ -173,17 +191,24 @@
         statusText.innerText = msg;
         statusText.style.color = "#FF4D4D";
         scanBtn.disabled = false;
+        scanBtn.innerText = "Scan Your Meal";
     }
 
     function processResult(data) {
         setLoading(false, "Meal scanned!");
+        
+        // Update Bars
         document.getElementById('last-cal-bar').style.width = Math.min((data.calories / 1000) * 100, 100) + "%";
         document.getElementById('last-cal-val').innerText = data.calories + " kcal";
         document.getElementById('p-bar').style.width = Math.min((data.protein / 50) * 100, 100) + "%";
         document.getElementById('p-val').innerText = data.protein + "g";
 
+        // Save to LocalStorage
         const history = JSON.parse(localStorage.getItem('meals') || "[]");
-        history.unshift({ ...data, time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) });
+        history.unshift({ 
+            ...data, 
+            time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) 
+        });
         localStorage.setItem('meals', JSON.stringify(history.slice(0, 10)));
         renderHistory();
     }
@@ -194,16 +219,24 @@
         let total = 0;
         history.forEach(m => {
             total += m.calories;
-            historyList.innerHTML += `<div class="history-card"><span><strong>${m.name}</strong><br><small>${m.time}</small></span><span style="color:#CBE896; font-weight:800;">${m.calories} kcal</span></div>`;
+            historyList.innerHTML += `
+                <div class="history-card">
+                    <span><strong>${m.name}</strong><br><small>${m.time}</small></span>
+                    <span style="color:#CBE896; font-weight:800;">${m.calories} kcal</span>
+                </div>`;
         });
         document.getElementById('session-total').innerText = total;
+        
+        // Update Circular Goal (based on 2000 kcal goal)
         const offset = 440 - (Math.min(total / 2000, 1) * 440);
         document.getElementById('goal-circle').style.strokeDashoffset = offset;
     }
 
     function clearHistory() {
-        localStorage.removeItem('meals');
-        location.reload();
+        if(confirm("Clear your daily log?")) {
+            localStorage.removeItem('meals');
+            location.reload();
+        }
     }
 </script>
 </body>
