@@ -237,6 +237,19 @@
 <footer><p>© 2026 Trackify AI — Precise Nutrition</p></footer>
 
 <script>
+    /* PWA SERVICE WORKER REGISTRATION */
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed:', err));
+        });
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+    });
+
     window.addEventListener("load", () => {
         setTimeout(() => {
             document.getElementById("loader-overlay").classList.add("loader-hidden");
@@ -315,11 +328,22 @@
     }
     mainLoop();
 
-    // UPDATED CLICK LISTENER TO INCLUDE LINK
+    // UPDATED CLICK LISTENER TO INCLUDE LINK AND PWA PROMPT
     btn.addEventListener('click', () => {
         const rect = btn.getBoundingClientRect();
         for (let i = 0; i < 20; i++) particles.push(new Particle(rect.left + rect.width/2, rect.top + rect.height/2));
         
+        // Trigger PWA Install if available
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+            });
+        }
+
         // Brief delay so the user sees the particle "pop" before the page shifts
         setTimeout(() => {
             window.location.href = 'pages/homePage';
