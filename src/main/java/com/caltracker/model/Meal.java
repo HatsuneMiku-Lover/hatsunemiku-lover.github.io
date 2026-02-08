@@ -1,4 +1,4 @@
-package main.java.com.caltracker;
+package com.caltracker.model;
 
 import java.util.Date; //imports the time
 import java.util.InputMismatchException;
