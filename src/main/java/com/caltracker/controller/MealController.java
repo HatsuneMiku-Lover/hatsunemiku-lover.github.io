@@ -3,53 +3,83 @@ package com.caltracker.controller;
 import com.caltracker.model.Meal;
 import com.caltracker.repository.MealRepository;
 import com.caltracker.service.NutritionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.List;
 
-@RestController // Tells Spring this class handles JSON web requests
-@RequestMapping("/api/meals") // The "base" URL for this controller
-@CrossOrigin(origins = "*") // Prevents "CORS" errors during your hackathon
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+
+@RestController
+@RequestMapping("/api/meals")
+@CrossOrigin(origins = "*")
 public class MealController {
 
-    // These are the "tools" the controller needs
+    private static final Logger logger = LoggerFactory.getLogger(MealController.class);
+
     private final NutritionService nutritionService;
     private final MealRepository mealRepository;
 
-    // Dependency Injection: Spring automatically plugs in your Service and Repo
     public MealController(NutritionService nutritionService, MealRepository mealRepository) {
         this.nutritionService = nutritionService;
         this.mealRepository = mealRepository;
     }
 
     /**
-     * This handles the "Scan Your Meal" button click.
-     * It receives an image, gets AI data, and saves it.
+     * Receives an image file, analyzes it, saves the resulting Meal, and returns the saved entity.
+     * Expects multipart/form-data.
      */
-    @PostMapping("/analyze")
-    public Meal analyzeMeal(@RequestParam("file") MultipartFile file) {
+    @PostMapping(value = "/analyze", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> analyzeMeal(@RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Missing or empty file");
+        }
+
         try {
-            // 1. Get the raw bytes from the uploaded image
             byte[] imageBytes = file.getBytes();
 
-            // 2. Call your AI logic (the info we already have)
+            // Defensive: ensure service exists
+            if (nutritionService == null) {
+                logger.error("NutritionService is not available");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server misconfiguration");
+            }
+
             Meal meal = nutritionService.analyzeFoodImage(imageBytes);
 
-            // 3. Save to the database (H2/SQL)
-            // This returns the meal WITH its new ID
-            return mealRepository.save(meal);
+            if (meal == null) {
+                logger.warn("NutritionService returned null meal for uploaded image");
+                return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("AI analysis returned no result");
+            }
 
+            if (mealRepository == null) {
+                logger.error("MealRepository is not available");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server misconfiguration");
+            }
+
+            Meal saved = mealRepository.save(meal);
+            return ResponseEntity.ok(saved);
+
+        } catch (IOException e) {
+            logger.error("Failed to read uploaded file", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to read uploaded file");
         } catch (Exception e) {
-            // If something goes wrong, the frontend sees an error
-            throw new RuntimeException("AI Analysis failed: " + e.getMessage());
+            logger.error("AI Analysis failed", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("AI Analysis failed");
         }
     }
 
-    /**
-     * This allows the frontend to load "Recent Scans"
-     */
     @GetMapping("/history")
-    public List<Meal> getMealHistory() {
-        return mealRepository.findAll();
+    public ResponseEntity<List<Meal>> getMealHistory() {
+        if (mealRepository == null) {
+            logger.error("MealRepository is not available");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        List<Meal> all = mealRepository.findAll();
+        return ResponseEntity.ok(all);
     }
 }
