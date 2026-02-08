@@ -118,7 +118,6 @@
     const statusText = document.getElementById('status-text');
     const historyList = document.getElementById('history-list');
 
-    // --- APP NAVIGATION LOGIC (NO REDIRECTS) ---
     document.getElementById('homeLink').addEventListener('click', (e) => {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -127,17 +126,15 @@
     document.getElementById('signOutBtn').addEventListener('click', () => {
         if(confirm("This will clear your current session. Continue?")) {
             localStorage.removeItem('mealHistory');
-            location.reload(); // Hard reset for "Sign Out" feel
+            location.reload();
         }
     });
 
-    // --- INITIALIZATION ---
     window.addEventListener("load", () => {
         setTimeout(() => document.getElementById("loader-overlay").classList.add("loader-hidden"), 1000);
         renderHistory();
     });
 
-    // --- SCAN LOGIC ---
     scanBtn.addEventListener('click', () => cameraInput.click());
 
     testBtn.addEventListener('click', () => {
@@ -189,11 +186,11 @@
         document.getElementById('p-val').innerText = meal.protein + "g";
     }
 
-    // --- JSON STORAGE ---
     function saveEntry(name, cal) {
         const history = JSON.parse(localStorage.getItem('mealHistory') || "[]");
         history.unshift({ name, cal, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-        localStorage.setItem('mealHistory', JSON.stringify(history.slice(0, 5)));
+        // Increased limit to 25 items
+        localStorage.setItem('mealHistory', JSON.stringify(history.slice(0, 25)));
         renderHistory();
     }
 
@@ -215,14 +212,13 @@
         
         document.getElementById('session-total').innerText = total + " kcal";
 
-        // --- METER LOGIC ---
         if (total > GOAL) {
             goalBar.style.width = "100%";
-            goalBar.style.background = "#FF4D4D"; // Red
+            goalBar.style.background = "#FF4D4D";
         } else {
             const percentage = (total / GOAL) * 100;
             goalBar.style.width = percentage + "%";
-            goalBar.style.background = "#CBE896"; // Green
+            goalBar.style.background = "#CBE896";
         }
     }
 
