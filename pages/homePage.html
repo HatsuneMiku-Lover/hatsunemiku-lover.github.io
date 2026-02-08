@@ -5,15 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
-
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Trackify">
-
     <meta name="theme-color" content="#0ACDFF">
     <title>Trackify - Smart Meal Scanner</title>
     <style>
-        /* --- CORE STYLES --- */
         #loader-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 9999; background: #CBE896;
@@ -38,10 +35,7 @@
 
         main { padding: 2rem 1rem; max-width: 450px; margin: 2rem auto; background: rgba(255, 255, 255, 0.1); border-radius: 32px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); text-align: center; }
 
-        /* --- CIRCULAR PROGRESS --- */
-        .circle-container {
-            position: relative; width: 180px; height: 180px; margin: 0 auto 1.5rem;
-        }
+        .circle-container { position: relative; width: 180px; height: 180px; margin: 0 auto 1.5rem; }
         .circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
         .circle-bg { fill: none; stroke: rgba(255, 255, 255, 0.2); stroke-width: 12; }
         .circle-progress {
@@ -52,6 +46,7 @@
         .circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
 
         .upload-btn { background: #0ACDFF; color: white; padding: 16px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 1rem; transition: transform 0.2s; }
+        .upload-btn:disabled { background: #ccc; cursor: not-allowed; }
         .test-btn { background: #034732; }
 
         .status-item { margin-bottom: 1rem; text-align: left; }
@@ -70,7 +65,7 @@
 
 <header>
     <div class="logo" id="homeLink">Trackify</div>
-    <button id="signOutBtn" style="background: white; color: #0ACDFF; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">Reset</button>
+    <button onclick="clearHistory()" style="background: white; color: #0ACDFF; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">Reset</button>
 </header>
 
 <main>
@@ -106,16 +101,14 @@
 </main>
 
 <div style="max-width: 450px; margin: 0 auto; padding: 0 1rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <h4 style="margin: 0;">History</h4>
-        <button onclick="clearHistory()" style="background: none; border: 1px solid rgba(255,255,255,0.3); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; cursor: pointer;">Clear</button>
-    </div>
+    <h4 style="margin: 0 0 10px 0;">History</h4>
     <div id="history-list"></div>
 </div>
 
 <footer>© 2026 Trackify — Smart Nutrition</footer>
 
 <script>
+    const API_KEY = "AIzaSyC-QeGWJWf4b6fwI2lbq0huDJbs9EFrwGk";
     const scanBtn = document.getElementById('scanBtn');
     const testBtn = document.getElementById('testBtn');
     const cameraInput = document.getElementById('cameraInput');
@@ -134,7 +127,7 @@
         setLoading(true);
         setTimeout(() => {
             processResult({
-                name: "Healthy Bowl",
+                name: "Mock Healthy Bowl",
                 calories: Math.floor(Math.random() * 400 + 200),
                 protein: Math.floor(Math.random() * 30 + 10)
             });
@@ -144,34 +137,66 @@
     cameraInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
         setLoading(true);
-        statusText.innerText = "Connecting to Trackify AI...";
-        const formData = new FormData();
-        formData.append("image", file);
+        statusText.innerText = "Analyzing meal...";
+        statusText.style.color = "#CBE896";
 
         try {
-            const response = await fetch("https://trackify-backend-0b47.onrender.com/analyze", {
-                method: "POST",
-                body: formData
+            const base64Image = await toBase64(file);
+            const imageData = base64Image.split(',')[1];
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [
+                            { text: "Examine this image. Is there food visible? If NO, return exactly: {'error': 'not_food'}. If YES, return a JSON object ONLY with: 'name', 'calories' (number), 'protein' (number). No extra text." },
+                            { inline_data: { mime_type: file.type, data: imageData } }
+                        ]
+                    }]
+                })
             });
-            if (!response.ok) throw new Error("Server Error");
+
             const data = await response.json();
-            processResult(data);
+            const resultText = data.candidates[0].content.parts[0].text;
+            const cleanJson = resultText.replace(/```json|```/g, "").trim();
+            const mealData = JSON.parse(cleanJson);
+            
+            if (mealData.error === 'not_food') {
+                statusText.innerText = "No food detected. Please scan a meal!";
+                statusText.style.color = "#FF4D4D";
+                setLoading(false);
+                return;
+            }
+
+            processResult(mealData);
         } catch (err) {
+            console.error(err);
+            statusText.innerText = "Error. Please try again.";
+            statusText.style.color = "#FF4D4D";
             setLoading(false);
-            statusText.innerText = "Scan failed.";
         }
+    });
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
     });
 
     function setLoading(isLoading) {
         scanBtn.disabled = isLoading;
         testBtn.disabled = isLoading;
-        statusText.innerText = isLoading ? "Analyzing..." : "Ready to scan";
+        if(!isLoading && statusText.innerText === "Scanning...") {
+            statusText.innerText = "Ready to scan";
+        }
     }
 
     function processResult(data) {
         setLoading(false);
-        // Update Last Meal Bars
         document.getElementById('last-cal-bar').style.width = Math.min((data.calories / 1000) * 100, 100) + "%";
         document.getElementById('last-cal-val').innerText = (data.calories || 0) + " kcal";
         document.getElementById('p-bar').style.width = Math.min((data.protein / 50) * 100, 100) + "%";
@@ -203,7 +228,6 @@
         });
 
         document.getElementById('session-total').innerText = total;
-
         const circle = document.getElementById('goal-circle');
         const percentage = Math.min(total / GOAL, 1);
         circle.style.strokeDashoffset = CIRCUMFERENCE - (percentage * CIRCUMFERENCE);
@@ -211,9 +235,15 @@
     }
 
     function clearHistory() {
-        if(confirm("Clear all history?")) {
+        if(confirm("Clear all logs?")) {
             localStorage.removeItem('mealHistory');
             renderHistory();
+            document.getElementById('last-cal-val').innerText = "0 kcal";
+            document.getElementById('p-val').innerText = "0g";
+            document.getElementById('last-cal-bar').style.width = "0%";
+            document.getElementById('p-bar').style.width = "0%";
+            statusText.innerText = "Ready to scan";
+            statusText.style.color = "#CBE896";
         }
     }
 </script>
