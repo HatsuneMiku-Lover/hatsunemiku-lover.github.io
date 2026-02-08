@@ -1,8 +1,8 @@
 const CACHE_NAME = 'tracalify-v1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/pages/homePage.html',
+  './',
+  './index.html',
+  './pages/homePage.html',
   'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap'
 ];
 
