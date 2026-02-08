@@ -1,8 +1,10 @@
 {
   "name": "Tracalify Smart Nutrition",
   "short_name": "Tracalify",
-  "start_url": "/",
+  "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#034732",
   "theme_color": "#0ACDFF",
   "icons": [
