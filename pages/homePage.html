@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-title" content=Tracalify>
 
     <meta name="theme-color" content="#0ACDFF">
-    <title>Trackify - Smart Meal Scanner</title>
+    <title>Tracalify - Smart Meal Scanner</title>
     <style>
         /* --- CORE STYLES --- */
         #loader-overlay {
@@ -57,11 +57,11 @@
 <body>
 
 <div id="loader-overlay">
-    <div class="logo-wrap">T<span class="brand-rest">rackify</span></div>
+    <div class="logo-wrap">T<span class="brand-rest">racalify</span></div>
 </div>
 
 <header>
-    <div class="logo" id="homeLink">Trackify</div>
+    <div class="logo" id="homeLink">Tracalify</div>
     <button id="fullResetBtn" onclick="fullReset()" style="background: white; color: #FF4D4D; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">Reset All</button>
 </header>
 
@@ -122,7 +122,7 @@
     <div id="history-list"></div>
 </div>
 
-<footer>© 2026 Trackify — Smart Nutrition</footer>
+<footer>© 2026 Tracalify — Smart Nutrition</footer>
 
 <script>
     // --- API KEYS PRESERVED ---
@@ -146,7 +146,7 @@
         const file = e.target.files[0];
         if (!file) return;
         setLoading(true);
-        statusText.innerText = "Trackify AI is scanning...";
+        statusText.innerText = "Tracalify AI is scanning...";
 
         try {
             const base64Data = await fileToBase64(file);
